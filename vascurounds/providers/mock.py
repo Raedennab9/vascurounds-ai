@@ -44,7 +44,10 @@ class MockCaseProvider:
                 educational_use=True,
             ),
             CaseAsset(
-                urn="urn:li:dataset:(urn:li:dataPlatform:vascurounds,ali-iia,DEV)",
+                urn=(
+                    "urn:li:dataset:(urn:li:dataPlatform:file,"
+                    "vascurounds.synthetic_cases.ali_marginally_threatened,DEV)"
+                ),
                 title="Rutherford IIa — Marginally Threatened",
                 rutherford_category="Rutherford IIa",
                 description=(

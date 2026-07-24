@@ -6,10 +6,34 @@ DataHub.
 > For professional education and simulation only. Not for direct patient-care
 > decision-making.
 
-The first functional milestone retrieves synthetic acute limb ischemia case
-assets from DataHub and presents them in clinical Rutherford order. It does not
-accept patient data, connect to hospital systems, call an LLM, or provide
-patient-care recommendations.
+The application retrieves synthetic acute limb ischemia case assets from
+DataHub and presents them in clinical Rutherford order. The Rutherford IIa
+asset now opens a six-stage educational case conference with five scored MCQs
+and a performance report. It does not accept patient data, connect to hospital
+systems, call an LLM, or provide patient-care recommendations.
+
+## Rutherford IIa conference
+
+The five clinical stages award 100 deterministic points:
+
+| Stage | Topic | Points |
+| --- | --- | ---: |
+| 1 | Initial recognition and focused assessment | 20 |
+| 2 | Rutherford classification | 20 |
+| 3 | Immediate management | 20 |
+| 4 | Diagnostic imaging and treatment planning | 20 |
+| 5 | Definitive management and escalation | 20 |
+
+Stage 6 reports performance and awards no additional points. Each new attempt
+randomizes the A–D option order while retaining stable internal answer IDs.
+The structured local content is bound at runtime only to:
+
+```text
+urn:li:dataset:(urn:li:dataPlatform:file,vascurounds.synthetic_cases.ali_marginally_threatened,DEV)
+```
+
+DataHub remains the source of the case metadata. Other Rutherford assets remain
+overview-only.
 
 ## Requirements
 
