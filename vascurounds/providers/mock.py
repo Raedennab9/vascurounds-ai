@@ -7,12 +7,25 @@ from vascurounds.case_urns import (
     RUTHERFORD_III_DATAHUB_URN,
 )
 from vascurounds.models import CaseAsset, sort_cases_clinically
+from vascurounds.providers.base import ProviderStatus
 
 
 class MockCaseProvider:
     @property
     def fallback_active(self) -> bool:
         return False
+
+    @property
+    def status(self) -> ProviderStatus:
+        return ProviderStatus(
+            provider_name="mock",
+            datahub_connected=False,
+            fallback_used=False,
+            required_connection_failed=False,
+            status_message=(
+                "Explicit offline mock mode is active; DataHub was not queried."
+            ),
+        )
 
     def list_cases(self) -> list[CaseAsset]:
         cases = [

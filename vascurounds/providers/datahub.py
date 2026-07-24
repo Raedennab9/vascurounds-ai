@@ -6,12 +6,13 @@ from typing import Any
 
 import requests
 
+from vascurounds.case_urns import ACUTE_LIMB_ISCHEMIA_URNS
 from vascurounds.models import (
     CaseAsset,
     normalize_rutherford_category,
     sort_cases_clinically,
 )
-from vascurounds.providers.base import ProviderUnavailableError
+from vascurounds.providers.base import ProviderStatus, ProviderUnavailableError
 
 
 SEARCH_CASES_QUERY = """
@@ -70,6 +71,7 @@ _EDUCATIONAL_KEYS = {
     "intendeduse",
 }
 _TRUE_VALUES = {"1", "true", "yes", "confirmed", "synthetic", "educational"}
+RequestTimeout = float | tuple[float, float]
 
 
 class DataHubCaseProvider:
@@ -77,16 +79,47 @@ class DataHubCaseProvider:
         self,
         gms_url: str,
         *,
-        timeout_seconds: float = 5.0,
+        timeout_seconds: RequestTimeout = 5.0,
         session: requests.Session | None = None,
+        required_connection: bool = False,
+        required_urns: tuple[str, ...] = (),
     ) -> None:
-        self._graphql_url = f"{gms_url.rstrip('/')}/api/graphql"
+        self._gms_url = gms_url.rstrip("/")
+        self._graphql_url = f"{self._gms_url}/api/graphql"
         self._timeout_seconds = timeout_seconds
         self._session = session or requests.Session()
+        self._required_connection = required_connection
+        self._required_urns = required_urns
+        self._status = ProviderStatus(
+            provider_name="datahub",
+            datahub_connected=False,
+            fallback_used=False,
+            required_connection_failed=False,
+            status_message="Live DataHub case retrieval has not run yet.",
+            endpoint=self._gms_url,
+        )
 
     @property
     def fallback_active(self) -> bool:
         return False
+
+    @property
+    def status(self) -> ProviderStatus:
+        return self._status
+
+    @property
+    def required_urns(self) -> tuple[str, ...]:
+        return self._required_urns
+
+    def _record_failure(self, message: str) -> None:
+        self._status = ProviderStatus(
+            provider_name="datahub",
+            datahub_connected=False,
+            fallback_used=False,
+            required_connection_failed=self._required_connection,
+            status_message=message,
+            endpoint=self._gms_url,
+        )
 
     def list_cases(self) -> list[CaseAsset]:
         payload = {
@@ -110,31 +143,108 @@ class DataHubCaseProvider:
             response.raise_for_status()
             body = response.json()
         except (requests.RequestException, ValueError) as exc:
-            raise ProviderUnavailableError(
-                f"Unable to query DataHub at {self._graphql_url}: {exc}"
-            ) from exc
+            message = f"Unable to query DataHub GMS: {exc}"
+            self._record_failure(message)
+            raise ProviderUnavailableError(message) from exc
 
-        if body.get("errors"):
-            message = "; ".join(
-                str(error.get("message", error)) for error in body["errors"]
-            )
-            raise ProviderUnavailableError(f"DataHub GraphQL query failed: {message}")
+        if not isinstance(body, Mapping):
+            message = "DataHub returned a non-object GraphQL response."
+            self._record_failure(message)
+            raise ProviderUnavailableError(message)
+
+        errors = body.get("errors")
+        if errors:
+            if isinstance(errors, list):
+                message = "; ".join(
+                    str(error.get("message", error))
+                    if isinstance(error, Mapping)
+                    else str(error)
+                    for error in errors
+                )
+            else:
+                message = str(errors)
+            failure_message = f"DataHub GraphQL query failed: {message}"
+            self._record_failure(failure_message)
+            raise ProviderUnavailableError(failure_message)
 
         try:
             results = body["data"]["searchAcrossEntities"]["searchResults"]
         except (KeyError, TypeError) as exc:
-            raise ProviderUnavailableError(
-                "DataHub returned an unexpected GraphQL response."
-            ) from exc
+            message = "DataHub returned an unexpected GraphQL response."
+            self._record_failure(message)
+            raise ProviderUnavailableError(message) from exc
+
+        if not isinstance(results, list):
+            message = (
+                "DataHub returned an unexpected GraphQL response: "
+                "searchResults was not a list."
+            )
+            self._record_failure(message)
+            raise ProviderUnavailableError(message)
 
         cases: list[CaseAsset] = []
         for result in results:
+            if not isinstance(result, Mapping):
+                message = (
+                    "DataHub returned an unexpected GraphQL response: "
+                    "a search result was not an object."
+                )
+                self._record_failure(message)
+                raise ProviderUnavailableError(message)
             entity = result.get("entity") or {}
+            if not isinstance(entity, Mapping):
+                message = (
+                    "DataHub returned an unexpected GraphQL response: "
+                    "a dataset entity was not an object."
+                )
+                self._record_failure(message)
+                raise ProviderUnavailableError(message)
             case = _case_from_entity(entity)
             if case is not None:
                 cases.append(case)
 
-        return sort_cases_clinically(cases)
+        sorted_cases = sort_cases_clinically(cases)
+        available_urns = {case.urn for case in sorted_cases}
+        missing_urns = [
+            urn for urn in self._required_urns if urn not in available_urns
+        ]
+        if missing_urns:
+            message = (
+                "DataHub is reachable but is missing "
+                f"{len(missing_urns)} of {len(self._required_urns)} required "
+                "VascuRounds datasets."
+            )
+            self._record_failure(message)
+            raise ProviderUnavailableError(message)
+
+        self._status = ProviderStatus(
+            provider_name="datahub",
+            datahub_connected=True,
+            fallback_used=False,
+            required_connection_failed=False,
+            status_message=(
+                "Synthetic educational cases loaded from DataHub metadata."
+            ),
+            endpoint=self._gms_url,
+        )
+        return sorted_cases
+
+
+def required_datahub_provider(
+    gms_url: str,
+    *,
+    timeout_seconds: RequestTimeout = 5.0,
+    session: requests.Session | None = None,
+) -> DataHubCaseProvider:
+    """Build a provider that requires the complete competition case catalog."""
+
+    return DataHubCaseProvider(
+        gms_url,
+        timeout_seconds=timeout_seconds,
+        session=session,
+        required_connection=True,
+        required_urns=ACUTE_LIMB_ISCHEMIA_URNS,
+    )
 
 
 def _normalize_key(value: str) -> str:

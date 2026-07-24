@@ -2,8 +2,15 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
+import requests
+
 from vascurounds.case_urns import ACUTE_LIMB_ISCHEMIA_URNS
-from vascurounds.providers.datahub import DataHubCaseProvider
+from vascurounds.providers.base import ProviderUnavailableError
+from vascurounds.providers.datahub import (
+    DataHubCaseProvider,
+    required_datahub_provider,
+)
 from vascurounds.providers.mock import MockCaseProvider
 
 
@@ -35,6 +42,17 @@ class StubSession:
         self.payload = json
         assert timeout == 5.0
         return StubResponse(self._body)
+
+
+class FailingSession:
+    def post(
+        self,
+        url: str,
+        *,
+        json: dict[str, Any],
+        timeout: float,
+    ) -> StubResponse:
+        raise requests.ConnectionError("connection refused")
 
 
 def _entity(
@@ -146,6 +164,10 @@ def test_retrieves_and_sorts_eligible_datahub_cases() -> None:
     ]
     assert all(case.synthetic_data and case.educational_use for case in cases)
     assert all(case.description for case in cases)
+    assert provider.status.provider_name == "datahub"
+    assert provider.status.datahub_connected is True
+    assert provider.status.fallback_used is False
+    assert provider.status.required_connection_failed is False
 
 
 def test_accepts_exact_seed_metadata_and_rejects_missing_synthetic_evidence() -> None:
@@ -222,3 +244,58 @@ def test_real_and_mock_providers_preserve_the_same_canonical_case_urns() -> None
 
     assert real_urns == ACUTE_LIMB_ISCHEMIA_URNS
     assert mock_urns == ACUTE_LIMB_ISCHEMIA_URNS
+
+
+def test_required_provider_blocks_when_a_canonical_dataset_is_missing() -> None:
+    body = {
+        "data": {
+            "searchAcrossEntities": {
+                "searchResults": [
+                    {
+                        "entity": _entity(
+                            code,
+                            title,
+                            "Synthetic acute limb ischemia conference.",
+                            urn=urn,
+                        )
+                    }
+                    for code, title, urn in zip(
+                        ("I", "IIa", "IIb"),
+                        ("Viable", "Marginal", "Immediate"),
+                        ACUTE_LIMB_ISCHEMIA_URNS[:3],
+                        strict=True,
+                    )
+                ]
+            }
+        }
+    }
+    provider = required_datahub_provider(
+        "http://localhost:8080",
+        session=StubSession(body),  # type: ignore[arg-type]
+    )
+
+    with pytest.raises(
+        ProviderUnavailableError,
+        match="missing 1 of 4 required",
+    ):
+        provider.list_cases()
+
+    assert provider.status.provider_name == "datahub"
+    assert provider.status.datahub_connected is False
+    assert provider.status.fallback_used is False
+    assert provider.status.required_connection_failed is True
+
+
+def test_required_provider_connection_error_records_blocking_state() -> None:
+    provider = required_datahub_provider(
+        "http://localhost:8080",
+        session=FailingSession(),  # type: ignore[arg-type]
+    )
+
+    with pytest.raises(ProviderUnavailableError, match="connection refused"):
+        provider.list_cases()
+
+    assert provider.status.datahub_connected is False
+    assert provider.status.fallback_used is False
+    assert provider.status.required_connection_failed is True
+    assert provider.status.endpoint == "http://localhost:8080"

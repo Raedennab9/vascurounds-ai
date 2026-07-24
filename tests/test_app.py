@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import pytest
 from streamlit.testing.v1 import AppTest
@@ -14,20 +14,44 @@ from vascurounds.models import (
     SYNTHETIC_STATUS_LABEL,
     CaseAsset,
 )
+from vascurounds.providers.base import ProviderStatus, ProviderUnavailableError
 from vascurounds.providers.mock import MockCaseProvider
 
 
 @dataclass
 class StaticProvider:
     cases: list[CaseAsset]
-    fallback_active: bool = False
+    provider_status: ProviderStatus = field(
+        default_factory=lambda: ProviderStatus(
+            provider_name="datahub",
+            datahub_connected=True,
+            fallback_used=False,
+            required_connection_failed=False,
+            status_message=(
+                "Synthetic educational cases loaded from DataHub metadata."
+            ),
+            endpoint="http://localhost:8080",
+        )
+    )
+    error: ProviderUnavailableError | None = None
+
+    @property
+    def fallback_active(self) -> bool:
+        return self.provider_status.fallback_used
+
+    @property
+    def status(self) -> ProviderStatus:
+        return self.provider_status
 
     def list_cases(self) -> list[CaseAsset]:
+        if self.error is not None:
+            raise self.error
         return self.cases
 
 
 def _mock_app(monkeypatch) -> AppTest:
     monkeypatch.setenv("DATAHUB_MODE", "mock")
+    monkeypatch.setenv("DATAHUB_REQUIRED", "false")
     return AppTest.from_file("app.py").run()
 
 
@@ -54,6 +78,25 @@ def test_catalog_displays_all_required_safety_language(monkeypatch) -> None:
         NO_DECISION_SUPPORT_LABEL,
     ):
         assert required_label in status_messages
+
+
+def test_explicit_mock_mode_is_labeled_and_not_reported_as_connected(
+    monkeypatch,
+) -> None:
+    app = _mock_app(monkeypatch)
+
+    assert (
+        "Offline demonstration active — bundled synthetic catalog "
+        "(explicit mock mode). The live DataHub integration is available "
+        "through the GitHub Codespace deployment."
+    ) in [message.value for message in app.info]
+    assert "DataHub connected — live integration active." not in [
+        message.value for message in app.success
+    ]
+    assert not any(
+        "loaded from DataHub metadata" in message.value
+        for message in app.markdown
+    )
 
 
 @pytest.mark.parametrize(
@@ -158,6 +201,32 @@ def test_matching_real_datahub_case_result_renders_a_conference(
     assert "Stage 1: Initial recognition and focused assessment" in [
         header.value for header in app.header
     ]
+    assert "DataHub connected — live integration active." in [
+        message.value for message in app.success
+    ]
+    assert any(
+        "Synthetic educational cases loaded from DataHub metadata."
+        in message.value
+        for message in app.markdown
+    )
+
+
+def test_live_datahub_catalog_exposes_all_four_conferences(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "vascurounds.providers.factory.create_provider",
+        lambda: StaticProvider(MockCaseProvider().list_cases()),
+    )
+
+    app = AppTest.from_file("app.py").run()
+
+    assert len(
+        [button for button in app.button if button.label == "View Case"]
+    ) == 4
+    assert any(
+        "4 eligible synthetic cases loaded from DataHub"
+        in caption.value
+        for caption in app.caption
+    )
 
 
 def test_datahub_unavailable_fallback_banner_and_conferences_remain_active(
@@ -167,17 +236,69 @@ def test_datahub_unavailable_fallback_banner_and_conferences_remain_active(
         "vascurounds.providers.factory.create_provider",
         lambda: StaticProvider(
             MockCaseProvider().list_cases(),
-            fallback_active=True,
+            provider_status=ProviderStatus(
+                provider_name="mock",
+                datahub_connected=False,
+                fallback_used=True,
+                required_connection_failed=False,
+                status_message="Automatic offline fallback is active.",
+            ),
         ),
     )
 
     app = AppTest.from_file("app.py").run()
 
-    assert any(
-        "DataHub is unavailable" in warning.value for warning in app.warning
+    assert (
+        "Offline demonstration active — bundled synthetic catalog "
+        "(automatic fallback). The live DataHub integration is available "
+        "through the GitHub Codespace deployment."
+    ) in [warning.value for warning in app.warning]
+    assert "DataHub connected — live integration active." not in [
+        message.value for message in app.success
+    ]
+    assert not any(
+        "loaded from DataHub metadata" in message.value
+        for message in app.markdown
     )
+    assert len(
+        [button for button in app.button if button.label == "View Case"]
+    ) == 4
     _begin_catalog_case(app, 0)
     assert len(app.radio) == 1
+
+
+def test_required_datahub_failure_blocks_catalog_and_conference(
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(
+        "vascurounds.providers.factory.create_provider",
+        lambda: StaticProvider(
+            MockCaseProvider().list_cases(),
+            provider_status=ProviderStatus(
+                provider_name="datahub",
+                datahub_connected=False,
+                fallback_used=False,
+                required_connection_failed=True,
+                status_message="DataHub connection was refused.",
+                endpoint="http://localhost:8080",
+            ),
+            error=ProviderUnavailableError("DataHub connection was refused."),
+        ),
+    )
+
+    app = AppTest.from_file("app.py").run()
+
+    assert "DataHub connection required but unavailable." in [
+        message.value for message in app.error
+    ]
+    assert not [
+        button for button in app.button if button.label == "View Case"
+    ]
+    assert not app.radio
+    assert "DataHub connected — live integration active." not in [
+        message.value for message in app.success
+    ]
+    assert EDUCATIONAL_DISCLAIMER in [message.value for message in app.info]
 
 
 def test_switching_cases_starts_a_fresh_isolated_attempt(monkeypatch) -> None:
@@ -274,6 +395,7 @@ def test_invalid_streamlit_url_is_reported_as_datahub_configuration_error(
     monkeypatch,
 ) -> None:
     monkeypatch.setenv("DATAHUB_MODE", "real")
+    monkeypatch.setenv("DATAHUB_REQUIRED", "true")
     monkeypatch.setenv("DATAHUB_GMS_URL", "http://localhost:8501")
 
     app = AppTest.from_file("app.py").run()

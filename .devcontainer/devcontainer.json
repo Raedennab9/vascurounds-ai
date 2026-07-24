@@ -19,15 +19,20 @@
   },
   "updateContentCommand": "[ -f packages.txt ] && sudo apt update && sudo apt upgrade -y && sudo xargs apt install -y <packages.txt; [ -f requirements.txt ] && pip3 install --user -r requirements.txt; pip3 install --user streamlit; echo '✅ Packages installed and Requirements met'",
   "postAttachCommand": {
-    "server": "DATAHUB_MODE=real DATAHUB_GMS_URL=http://localhost:8080 streamlit run app.py --server.address 0.0.0.0 --server.port 8501 --server.enableCORS false --server.enableXsrfProtection false"
+    "server": "bash scripts/start_competition_demo.sh"
   },
   "portsAttributes": {
     "8501": {
-      "label": "Application",
+      "label": "VascuRounds AI",
       "onAutoForward": "openPreview"
+    },
+    "9002": {
+      "label": "DataHub UI",
+      "onAutoForward": "notify"
     }
   },
   "forwardPorts": [
-    8501
+    8501,
+    9002
   ]
 }

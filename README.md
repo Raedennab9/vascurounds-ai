@@ -58,10 +58,102 @@ python -m venv .venv
 | --- | --- | --- |
 | `DATAHUB_GMS_URL` | `http://localhost:8080` | DataHub GMS base URL |
 | `DATAHUB_MODE` | `real` | `real`, `mock`, or `auto` |
+| `DATAHUB_REQUIRED` | `true` in `real` mode | Require the live four-case DataHub catalog and prohibit fallback |
 
-`real` fails safely when DataHub is unavailable. `mock` uses the bundled
-synthetic catalog for tests and offline development. `auto` tries DataHub first
-and falls back to the visibly labeled mock catalog.
+`real` uses DataHub and defaults to required mode. `auto` tries DataHub first
+and, only when `DATAHUB_REQUIRED=false`, falls back to the visibly labeled
+synthetic catalog. `mock` explicitly uses the offline catalog and never reports
+DataHub as connected. `DATAHUB_REQUIRED` accepts `true`, `1`, `yes`, `on` and
+`false`, `0`, `no`, `off`.
+
+The public Codespace port-8501 URL is the browser-facing Streamlit URL. It must
+never be used as `DATAHUB_GMS_URL`; Streamlit reaches DataHub GMS internally at
+`http://localhost:8080`.
+
+## Deployment options
+
+VascuRounds AI has two intentional demonstration deployments:
+
+| Deployment | Case metadata source | Status |
+| --- | --- | --- |
+| GitHub Codespace | DataHub GMS running alongside Streamlit in the same Codespace | Official live DataHub integration |
+| Streamlit Community Cloud | Bundled synthetic catalog | Offline demonstration |
+
+The Streamlit Community Cloud application cannot reach DataHub running inside
+a separate Codespace through `localhost`. It therefore uses explicit mock mode
+and must identify itself as an offline demonstration. The live integration is
+available through the Codespace deployment; no temporary Codespace URL is
+embedded in this repository.
+
+## Competition demonstration
+
+Run the live demonstration inside the same GitHub Codespace as DataHub OSS:
+
+```bash
+cd /workspaces/vascurounds-ai
+
+export DATAHUB_MODE=real
+export DATAHUB_REQUIRED=true
+export DATAHUB_GMS_URL=http://localhost:8080
+
+python3 scripts/check_datahub.py
+bash scripts/start_competition_demo.sh
+```
+
+If the four case assets are absent, seed their canonical URNs idempotently and
+run the check again:
+
+```bash
+python3 scripts/seed_datahub.py
+python3 scripts/check_datahub.py
+```
+
+The application must show:
+
+```text
+DataHub connected — live integration active.
+Synthetic educational cases loaded from DataHub metadata.
+```
+
+Then make port `8501` **Public** in the Codespace Ports panel and open its
+forwarded URL. Port `8080` may remain private. DataHub's UI is available on
+port `9002` when needed.
+
+This warning:
+
+```text
+Offline demonstration active — bundled synthetic catalog (automatic fallback).
+```
+
+means development fallback mode is active; it is not the live competition
+demonstration. Streamlit Community Cloud cannot reach a DataHub service at
+`localhost:8080` inside a separate Codespace.
+
+The explicit Streamlit Community Cloud deployment shows:
+
+```text
+Offline demonstration active — bundled synthetic catalog (explicit mock mode).
+```
+
+Both offline messages direct users to the GitHub Codespace deployment for the
+live DataHub integration.
+
+For development fallback:
+
+```bash
+export DATAHUB_MODE=auto
+export DATAHUB_REQUIRED=false
+export DATAHUB_GMS_URL=http://localhost:8080
+python3 -m streamlit run app.py
+```
+
+For explicit offline development:
+
+```bash
+export DATAHUB_MODE=mock
+export DATAHUB_REQUIRED=false
+python3 -m streamlit run app.py
+```
 
 ## Launch
 

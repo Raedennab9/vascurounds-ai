@@ -24,7 +24,7 @@ from vascurounds.models import (
     EDUCATIONAL_DISCLAIMER,
     CaseAsset,
 )
-from vascurounds.providers.base import ProviderUnavailableError
+from vascurounds.providers.base import ProviderStatus, ProviderUnavailableError
 from vascurounds.providers.factory import (
     InvalidDataHubConfigurationError,
     create_provider,
@@ -45,6 +45,61 @@ def _render_safety_status(case: CaseAsset) -> None:
         left.success(labels[start], icon="✅")
         if start + 1 < len(labels):
             right.success(labels[start + 1], icon="✅")
+
+
+def _render_provider_status(
+    status: ProviderStatus,
+    cases: list[CaseAsset],
+) -> None:
+    if status.datahub_connected:
+        st.success("DataHub connected — live integration active.")
+        st.write("Synthetic educational cases loaded from DataHub metadata.")
+        st.caption(
+            f"{len(cases)} eligible synthetic cases loaded from DataHub"
+        )
+        return
+
+    if status.fallback_used:
+        st.warning(
+            "Offline demonstration active — bundled synthetic catalog "
+            "(automatic fallback). The live DataHub integration is available "
+            "through the GitHub Codespace deployment."
+        )
+        return
+
+    if status.provider_name == "mock":
+        st.info(
+            "Offline demonstration active — bundled synthetic catalog "
+            "(explicit mock mode). The live DataHub integration is available "
+            "through the GitHub Codespace deployment."
+        )
+
+
+def _render_provider_failure(status: ProviderStatus, error: Exception) -> None:
+    st.session_state.pop("selected_case_urn", None)
+    st.session_state.pop("conference_attempt", None)
+
+    if status.required_connection_failed:
+        st.error("DataHub connection required but unavailable.")
+        st.write(
+            "This competition deployment requires the live DataHub GMS endpoint:"
+        )
+        if status.endpoint:
+            st.code(status.endpoint)
+        st.write(
+            "Confirm that the DataHub Docker services are running and that "
+            "DATAHUB_GMS_URL is not pointing to the Streamlit port."
+        )
+        st.caption(status.status_message)
+        return
+
+    st.error("VascuRounds AI could not retrieve cases from DataHub.")
+    st.write(str(error))
+    st.caption(
+        "Confirm that DATAHUB_GMS_URL is reachable, or use "
+        "DATAHUB_MODE=auto with DATAHUB_REQUIRED=false for a clearly labeled "
+        "development fallback."
+    )
 
 
 def _select_case(case: CaseAsset) -> None:
@@ -319,19 +374,10 @@ def main() -> None:
     try:
         cases = provider.list_cases()
     except ProviderUnavailableError as exc:
-        st.error("VascuRounds AI could not retrieve cases from DataHub.")
-        st.write(str(exc))
-        st.caption(
-            "Confirm that DATAHUB_GMS_URL is reachable, or set "
-            "DATAHUB_MODE=mock for offline development."
-        )
+        _render_provider_failure(provider.status, exc)
         return
 
-    if provider.fallback_active:
-        st.warning(
-            "DataHub is unavailable. Displaying the clearly labeled offline "
-            "synthetic case catalog."
-        )
+    _render_provider_status(provider.status, cases)
 
     if not cases:
         st.warning(
