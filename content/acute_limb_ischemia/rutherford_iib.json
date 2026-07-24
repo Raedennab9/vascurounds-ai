@@ -1,0 +1,200 @@
+{
+  "id": "ali-rutherford-iib-conference",
+  "title": "Rutherford IIb — Immediately Threatened",
+  "rutherford_category": "Rutherford IIb",
+  "datahub_link": {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:file,vascurounds.synthetic_cases.ali_immediately_threatened,DEV)",
+    "required_category": "Rutherford IIb"
+  },
+  "disclaimer": "For professional education and simulation only. Not for direct patient-care decision-making.",
+  "synthetic_findings": [
+    "Sudden severe unilateral lower-limb ischemic pain",
+    "Sensory loss extending beyond the toes",
+    "Mild-to-moderate motor weakness",
+    "Absent arterial Doppler signal",
+    "Preserved venous Doppler signal",
+    "Limb salvage depends on immediate revascularization"
+  ],
+  "stages": [
+    {
+      "id": "focused_assessment",
+      "number": 1,
+      "title": "Stage 1: Initial recognition and focused assessment",
+      "narrative": "A synthetic patient develops sudden severe unilateral limb pain. Focused examination shows sensory loss extending beyond the toes and new mild motor weakness.",
+      "question": "Which finding most clearly escalates this presentation to an immediately threatened limb?",
+      "points": 20,
+      "rationale": "Motor weakness is the critical escalation feature separating an immediately threatened Rutherford IIb limb from a marginally threatened IIa limb.",
+      "safety_principle": "A new motor deficit in acute limb ischemia signals immediate threat and demands immediate vascular-surgery involvement and a reperfusion pathway.",
+      "choices": [
+        {
+          "id": "motor_deficit_escalation",
+          "text": "New motor weakness accompanying the acute sensory and perfusion abnormalities",
+          "correct": true,
+          "feedback": "Motor deficit identifies advanced neurological ischemia and the need for immediate escalation."
+        },
+        {
+          "id": "pain_intensity_alone",
+          "text": "Severe pain alone without considering sensory, motor, or Doppler findings",
+          "correct": false,
+          "feedback": "Pain is important but does not distinguish IIa from IIb as reliably as the motor examination."
+        },
+        {
+          "id": "preserved_venous_signal_reassurance",
+          "text": "A preserved venous Doppler signal, which indicates that the limb is not threatened",
+          "correct": false,
+          "feedback": "Venous flow may remain audible in IIb and does not negate the neurological evidence of immediate threat."
+        },
+        {
+          "id": "sensory_loss_without_motor_context",
+          "text": "Any sensory symptom, regardless of its distribution or the presence of weakness",
+          "correct": false,
+          "feedback": "The extent of sensory loss matters, but motor weakness is the defining escalation feature in this synthetic comparison."
+        }
+      ]
+    },
+    {
+      "id": "rutherford_classification",
+      "number": 2,
+      "title": "Stage 2: Rutherford classification",
+      "narrative": "The synthetic limb has sensory loss beyond the toes, mild-to-moderate motor weakness, no arterial Doppler signal, and a preserved venous Doppler signal.",
+      "question": "Which Rutherford category best matches these findings?",
+      "points": 20,
+      "rationale": "Sensory loss beyond the toes plus motor weakness, with absent arterial and preserved venous Doppler signals, defines an immediately threatened Rutherford IIb limb.",
+      "safety_principle": "Rutherford IIb is salvageable only with immediate revascularization; classification must not introduce delay.",
+      "choices": [
+        {
+          "id": "rutherford_i",
+          "text": "Rutherford I — Viable",
+          "correct": false,
+          "feedback": "A viable limb has no sensory or motor deficit and usually retains audible arterial and venous Doppler signals."
+        },
+        {
+          "id": "rutherford_iia",
+          "text": "Rutherford IIa — Marginally threatened",
+          "correct": false,
+          "feedback": "Rutherford IIa has no motor weakness and sensory loss is absent or limited to the toes."
+        },
+        {
+          "id": "rutherford_iib",
+          "text": "Rutherford IIb — Immediately threatened",
+          "correct": true,
+          "feedback": "The extended sensory deficit, motor weakness, and Doppler pattern support Rutherford IIb."
+        },
+        {
+          "id": "rutherford_iii",
+          "text": "Rutherford III — Irreversible",
+          "correct": false,
+          "feedback": "Rutherford III has profound anesthesia and paralysis, often with absent arterial and venous Doppler signals."
+        }
+      ]
+    },
+    {
+      "id": "immediate_management",
+      "number": 3,
+      "title": "Stage 3: Immediate management",
+      "narrative": "The synthetic limb remains immediately threatened, and no contraindication to anticoagulation has been identified.",
+      "question": "Which immediate management bundle best matches the urgency of this presentation?",
+      "points": 20,
+      "rationale": "Immediate vascular-surgery involvement, intravenous unfractionated heparin unless contraindicated, analgesia, resuscitation and supportive care, and repeated neurological and vascular assessment should accompany preparation for immediate reperfusion.",
+      "safety_principle": "Supportive measures and anticoagulation must occur in parallel with, not instead of, the fastest feasible revascularization pathway.",
+      "choices": [
+        {
+          "id": "immediate_specialist_heparin_support",
+          "text": "Activate immediate vascular-surgery care, give intravenous unfractionated heparin unless contraindicated, provide resuscitation and analgesia, and repeat limb assessments",
+          "correct": true,
+          "feedback": "This combines immediate escalation, thrombus-propagation control, supportive care, and surveillance while reperfusion is organized."
+        },
+        {
+          "id": "observe_motor_deficit",
+          "text": "Observe the motor deficit for several hours before deciding whether specialist involvement is necessary",
+          "correct": false,
+          "feedback": "Observation risks progression to irreversible ischemia and is incompatible with an immediately threatened limb."
+        },
+        {
+          "id": "complete_imaging_before_heparin",
+          "text": "Withhold anticoagulation and vascular escalation until a complete elective imaging workup is available",
+          "correct": false,
+          "feedback": "Imaging must not create harmful delay, and anticoagulation is generally initiated unless contraindicated."
+        },
+        {
+          "id": "analgesia_without_reperfusion_plan",
+          "text": "Provide analgesia and fluids but defer reperfusion planning until the neurological findings stabilize",
+          "correct": false,
+          "feedback": "Supportive care is necessary but cannot replace immediate planning for limb-saving reperfusion."
+        }
+      ]
+    },
+    {
+      "id": "imaging_and_planning",
+      "number": 4,
+      "title": "Stage 4: Diagnostic imaging and treatment planning",
+      "narrative": "Immediate reperfusion is being organized. Anatomical imaging may be available without delaying transfer or treatment.",
+      "question": "How should imaging be used in this Rutherford IIb pathway?",
+      "points": 20,
+      "rationale": "Anatomical imaging is useful only when it can be obtained immediately, guides the intervention, and does not postpone reperfusion in an immediately threatened limb.",
+      "safety_principle": "When imaging would delay treatment, the immediate revascularization pathway takes priority over additional anatomical definition.",
+      "choices": [
+        {
+          "id": "immediate_imaging_without_delay",
+          "text": "Use immediately available anatomical imaging only if it guides treatment without postponing reperfusion",
+          "correct": true,
+          "feedback": "This preserves useful anatomical planning while protecting the time-critical reperfusion pathway."
+        },
+        {
+          "id": "routine_full_imaging_sequence",
+          "text": "Complete a routine sequence of noninvasive and invasive imaging before choosing any treatment",
+          "correct": false,
+          "feedback": "A routine sequence can create harmful delay in an immediately threatened limb."
+        },
+        {
+          "id": "elective_imaging_after_observation",
+          "text": "Observe the limb overnight and obtain elective anatomical imaging if weakness persists",
+          "correct": false,
+          "feedback": "Motor weakness requires immediate action rather than observation and elective imaging."
+        },
+        {
+          "id": "never_use_imaging",
+          "text": "Avoid imaging in every Rutherford IIb case even when it is immediately available during treatment preparation",
+          "correct": false,
+          "feedback": "Rapid imaging can guide the fastest suitable intervention when it does not delay reperfusion."
+        }
+      ]
+    },
+    {
+      "id": "definitive_management",
+      "number": 5,
+      "title": "Stage 5: Definitive management and escalation",
+      "narrative": "The synthetic limb remains salvageable but immediately threatened. The vascular team has enough information to choose a reperfusion strategy.",
+      "question": "Which definitive-management principle is most appropriate?",
+      "points": 20,
+      "rationale": "Immediate revascularization should use the fastest appropriate surgical, endovascular, catheter-directed, bypass, or hybrid method based on anatomy, etiology, symptom duration, severity, bleeding risk, comorbidity, available expertise, and time to reperfusion.",
+      "safety_principle": "No single technique is universally correct, but any avoidable delay threatens progression from salvageable IIb ischemia to irreversible tissue injury.",
+      "choices": [
+        {
+          "id": "fastest_appropriate_revascularization",
+          "text": "Proceed immediately with the fastest suitable revascularization method selected for anatomy, cause, duration, severity, bleeding risk, comorbidity, expertise, and time to flow restoration",
+          "correct": true,
+          "feedback": "This prioritizes immediate reperfusion while recognizing that technique selection is individualized."
+        },
+        {
+          "id": "universal_open_embolectomy",
+          "text": "Use open surgical thromboembolectomy for every Rutherford IIb limb regardless of anatomy or etiology",
+          "correct": false,
+          "feedback": "Open thromboembolectomy may be appropriate, but no technique is universal across all lesions and causes."
+        },
+        {
+          "id": "delayed_catheter_thrombolysis",
+          "text": "Schedule catheter-directed thrombolysis electively after a period of observation for neurological improvement",
+          "correct": false,
+          "feedback": "Elective delay is unsafe; catheter-directed therapy is only one possible immediate strategy in selected anatomy and risk profiles."
+        },
+        {
+          "id": "supportive_care_without_revascularization",
+          "text": "Continue anticoagulation and supportive care alone while waiting for motor weakness to resolve",
+          "correct": false,
+          "feedback": "Medical therapy alone does not provide the immediate reperfusion required by a salvageable Rutherford IIb limb."
+        }
+      ]
+    }
+  ]
+}

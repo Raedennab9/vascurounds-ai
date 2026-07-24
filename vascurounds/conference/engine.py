@@ -150,11 +150,6 @@ def _build_option_orders(
         generator.shuffle(choice_ids)
         orders[stage.id] = tuple(choice_ids)
 
-    if previous_orders:
-        for stage in definition.stages:
-            if orders.get(stage.id) == previous_orders.get(stage.id):
-                orders[stage.id] = _rotate(orders[stage.id])
-
     correct_positions = [
         orders[stage.id].index(stage.correct_choice.id) for stage in definition.stages
     ]
@@ -165,6 +160,11 @@ def _build_option_orders(
         swap_index = (correct_index + 1) % len(order)
         order[correct_index], order[swap_index] = order[swap_index], order[correct_index]
         orders[stage.id] = tuple(order)
+
+    if previous_orders:
+        for stage in definition.stages:
+            if orders.get(stage.id) == previous_orders.get(stage.id):
+                orders[stage.id] = _rotate(orders[stage.id])
 
     return orders
 

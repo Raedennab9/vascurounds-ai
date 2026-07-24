@@ -1,0 +1,200 @@
+{
+  "id": "ali-rutherford-i-conference",
+  "title": "Rutherford I — Viable",
+  "rutherford_category": "Rutherford I",
+  "datahub_link": {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:file,vascurounds.synthetic_cases.ali_viable,DEV)",
+    "required_category": "Rutherford I"
+  },
+  "disclaimer": "For professional education and simulation only. Not for direct patient-care decision-making.",
+  "synthetic_findings": [
+    "Sudden unilateral lower-limb pain and coolness",
+    "No sensory loss",
+    "No motor weakness",
+    "Audible arterial Doppler signal",
+    "Audible venous Doppler signal",
+    "Limb viable and not immediately threatened"
+  ],
+  "stages": [
+    {
+      "id": "focused_assessment",
+      "number": 1,
+      "title": "Stage 1: Initial recognition and focused assessment",
+      "narrative": "A synthetic patient develops sudden unilateral lower-limb pain and coolness. Sensation and motor function are intact, and arterial and venous Doppler signals remain audible.",
+      "question": "What is the best initial educational response to this presentation?",
+      "points": 20,
+      "rationale": "Acute limb ischemia remains possible despite preserved neurological function and audible Doppler signals. Urgent focused assessment should establish symptom timing, perfusion, motor and sensory status, and possible causes.",
+      "safety_principle": "A viable limb is not immediately threatened, but preserved sensation and strength must not create false reassurance or routine discharge.",
+      "choices": [
+        {
+          "id": "recognize_and_assess_urgently",
+          "text": "Recognize possible acute limb ischemia and perform an urgent focused vascular and neurological assessment",
+          "correct": true,
+          "feedback": "This identifies the time-sensitive arterial presentation while confirming that the limb remains viable."
+        },
+        {
+          "id": "reassure_from_preserved_function",
+          "text": "Consider the limb safe because sensation and strength are preserved and arrange routine follow-up",
+          "correct": false,
+          "feedback": "Preserved neurological function supports viability but does not exclude acute limb ischemia or remove the need for urgent evaluation."
+        },
+        {
+          "id": "defer_exam_until_imaging",
+          "text": "Defer the bedside viability assessment until formal anatomical imaging is available",
+          "correct": false,
+          "feedback": "Bedside vascular and neurological assessment establishes urgency and should not be postponed for imaging."
+        },
+        {
+          "id": "venous_assessment_only",
+          "text": "Restrict the assessment to venous thrombosis because arterial Doppler flow is still audible",
+          "correct": false,
+          "feedback": "An audible arterial signal does not exclude a partial or distal arterial occlusion, so an arterial assessment remains necessary."
+        }
+      ]
+    },
+    {
+      "id": "rutherford_classification",
+      "number": 2,
+      "title": "Stage 2: Rutherford classification",
+      "narrative": "The synthetic limb has no sensory loss, no motor weakness, an audible arterial Doppler signal, and an audible venous Doppler signal.",
+      "question": "Which Rutherford category best matches these findings?",
+      "points": 20,
+      "rationale": "A limb without sensory or motor deficit and with audible arterial and venous Doppler signals is viable, Rutherford I, and is not immediately threatened.",
+      "safety_principle": "Rutherford classification is dynamic; any new sensory or motor deficit requires immediate reassessment and escalation.",
+      "choices": [
+        {
+          "id": "rutherford_i",
+          "text": "Rutherford I — Viable",
+          "correct": true,
+          "feedback": "The preserved neurological examination and audible Doppler signals support a viable Rutherford I limb."
+        },
+        {
+          "id": "rutherford_iia",
+          "text": "Rutherford IIa — Marginally threatened",
+          "correct": false,
+          "feedback": "Rutherford IIa usually includes at least minimal sensory loss, which is absent in this synthetic case."
+        },
+        {
+          "id": "rutherford_iib",
+          "text": "Rutherford IIb — Immediately threatened",
+          "correct": false,
+          "feedback": "An immediately threatened limb has a more extensive sensory deficit and motor weakness, neither of which is present."
+        },
+        {
+          "id": "rutherford_iii",
+          "text": "Rutherford III — Irreversible",
+          "correct": false,
+          "feedback": "Irreversible ischemia requires profound anesthesia and paralysis with absent arterial and venous Doppler signals."
+        }
+      ]
+    },
+    {
+      "id": "immediate_management",
+      "number": 3,
+      "title": "Stage 3: Immediate management",
+      "narrative": "The synthetic limb remains viable. No contraindication to anticoagulation has been identified, but the cause and arterial anatomy are not yet defined.",
+      "question": "Which immediate management approach is most appropriate for the case conference?",
+      "points": 20,
+      "rationale": "A viable acute ischemic limb still requires urgent vascular-surgery assessment, intravenous unfractionated heparin unless contraindicated, analgesia and supportive care, and repeated vascular and neurological reassessment.",
+      "safety_principle": "Viability allows orderly urgent evaluation, not routine discharge or delay; anticoagulation contraindications and progression must remain under review.",
+      "choices": [
+        {
+          "id": "urgent_review_heparin_support",
+          "text": "Arrange urgent vascular-surgery review, give intravenous unfractionated heparin unless contraindicated, provide supportive care, and repeat limb assessments",
+          "correct": true,
+          "feedback": "This addresses thrombus propagation, comfort, specialist evaluation, and surveillance for deterioration."
+        },
+        {
+          "id": "wait_for_imaging_before_anticoagulation",
+          "text": "Wait for all anatomical and etiological imaging before considering anticoagulation or specialist review",
+          "correct": false,
+          "feedback": "Routine delay may permit propagation or progression; imaging completion alone is not a reason to defer the urgent pathway."
+        },
+        {
+          "id": "outpatient_antiplatelet_only",
+          "text": "Use outpatient antiplatelet therapy alone because arterial and venous Doppler signals are audible",
+          "correct": false,
+          "feedback": "Audible signals support viability but do not make an acute arterial presentation suitable for routine outpatient management."
+        },
+        {
+          "id": "heparin_without_specialist_assessment",
+          "text": "Begin anticoagulation but postpone vascular-surgery assessment unless a neurological deficit develops",
+          "correct": false,
+          "feedback": "Anticoagulation does not replace urgent specialist assessment, anatomical definition, and etiological planning."
+        }
+      ]
+    },
+    {
+      "id": "imaging_and_planning",
+      "number": 4,
+      "title": "Stage 4: Diagnostic imaging and treatment planning",
+      "narrative": "The synthetic limb remains Rutherford I after initial management, providing time for prompt anatomical and etiological evaluation without neglecting reassessment.",
+      "question": "What is the best diagnostic and planning approach?",
+      "points": 20,
+      "rationale": "Prompt anatomical imaging should define the occlusion and guide treatment, while evaluation considers embolic, thrombotic, graft-related, aneurysmal, traumatic, and other causes.",
+      "safety_principle": "Diagnostic evaluation should remain urgent and must be accelerated if sensory loss, weakness, or Doppler deterioration appears.",
+      "choices": [
+        {
+          "id": "prompt_anatomy_and_etiology",
+          "text": "Obtain prompt anatomical imaging and investigate the likely embolic, thrombotic, graft-related, aneurysmal, traumatic, or other etiology",
+          "correct": true,
+          "feedback": "This uses the viable interval to define anatomy and cause while preserving an urgent treatment pathway."
+        },
+        {
+          "id": "no_imaging_with_audible_signal",
+          "text": "Avoid anatomical imaging because an audible arterial Doppler signal excludes a clinically important occlusion",
+          "correct": false,
+          "feedback": "An audible signal does not exclude a partial, distal, or collateralized acute occlusion."
+        },
+        {
+          "id": "anatomy_without_cause",
+          "text": "Define the arterial anatomy but omit etiological assessment because cause does not influence future management",
+          "correct": false,
+          "feedback": "Etiology affects treatment selection and prevention of recurrence, so it remains a core part of planning."
+        },
+        {
+          "id": "elective_testing_after_discharge",
+          "text": "Discharge the patient and arrange elective vascular imaging only if symptoms remain after several days",
+          "correct": false,
+          "feedback": "A viable acute ischemic limb still requires prompt specialist-led anatomical evaluation."
+        }
+      ]
+    },
+    {
+      "id": "definitive_management",
+      "number": 5,
+      "title": "Stage 5: Definitive management and escalation",
+      "narrative": "Imaging confirms an acute arterial lesion. The limb remains neurologically intact and viable while anatomy and etiology are reviewed.",
+      "question": "Which definitive-management principle is most appropriate?",
+      "points": 20,
+      "rationale": "Rutherford I allows appropriate anatomical and etiological evaluation, but treatment remains urgent and individualized to anatomy, etiology, symptom duration, comorbidity, bleeding risk, and local expertise.",
+      "safety_principle": "Continued viability does not justify neglect; new sensory loss or weakness changes the limb-threat category and accelerates the pathway.",
+      "choices": [
+        {
+          "id": "individualized_urgent_plan",
+          "text": "Choose an urgent individualized medical, endovascular, surgical, or hybrid plan based on anatomy, cause, duration, comorbidity, bleeding risk, and expertise",
+          "correct": true,
+          "feedback": "This uses the viable interval for informed planning without converting acute limb ischemia into routine follow-up."
+        },
+        {
+          "id": "universal_thrombolysis",
+          "text": "Use catheter-directed thrombolysis for every viable acute limb regardless of anatomy, cause, or bleeding risk",
+          "correct": false,
+          "feedback": "No single technique is appropriate for every anatomy, etiology, and risk profile."
+        },
+        {
+          "id": "routine_nonurgent_followup",
+          "text": "Provide reassurance and routine follow-up because the limb is not immediately threatened",
+          "correct": false,
+          "feedback": "Rutherford I is viable but still represents acute limb ischemia requiring urgent specialist-led management."
+        },
+        {
+          "id": "primary_amputation",
+          "text": "Treat primary amputation as the default strategy for a neurologically intact viable limb",
+          "correct": false,
+          "feedback": "A Rutherford I limb is viable and does not support primary amputation as the routine educational direction."
+        }
+      ]
+    }
+  ]
+}

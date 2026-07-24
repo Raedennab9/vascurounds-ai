@@ -3,6 +3,8 @@ from __future__ import annotations
 from vascurounds.models import (
     EDUCATIONAL_DISCLAIMER,
     EDUCATIONAL_STATUS_LABEL,
+    NO_DECISION_SUPPORT_LABEL,
+    NO_PATIENT_DATA_LABEL,
     SYNTHETIC_STATUS_LABEL,
     CaseAsset,
     sort_cases_clinically,
@@ -38,6 +40,8 @@ def test_required_safety_labels_and_disclaimer_are_preserved() -> None:
     assert case.safety_labels == (
         SYNTHETIC_STATUS_LABEL,
         EDUCATIONAL_STATUS_LABEL,
+        NO_PATIENT_DATA_LABEL,
+        NO_DECISION_SUPPORT_LABEL,
     )
     assert EDUCATIONAL_DISCLAIMER == (
         "For professional education and simulation only. "

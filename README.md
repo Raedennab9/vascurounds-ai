@@ -7,14 +7,14 @@ DataHub.
 > decision-making.
 
 The application retrieves synthetic acute limb ischemia case assets from
-DataHub and presents them in clinical Rutherford order. The Rutherford IIa
-asset now opens a six-stage educational case conference with five scored MCQs
-and a performance report. It does not accept patient data, connect to hospital
-systems, call an LLM, or provide patient-care recommendations.
+DataHub and presents them in clinical Rutherford order. Interactive conferences
+are available for Rutherford I, IIa, IIb, and III. The application does not
+accept patient data, connect to hospital systems, call an LLM, or provide
+patient-care recommendations.
 
-## Rutherford IIa conference
+## Acute limb ischemia conferences
 
-The five clinical stages award 100 deterministic points:
+Every case uses the same six-stage workflow:
 
 | Stage | Topic | Points |
 | --- | --- | ---: |
@@ -23,17 +23,21 @@ The five clinical stages award 100 deterministic points:
 | 3 | Immediate management | 20 |
 | 4 | Diagnostic imaging and treatment planning | 20 |
 | 5 | Definitive management and escalation | 20 |
+| 6 | Performance report | — |
 
-Stage 6 reports performance and awards no additional points. Each new attempt
-randomizes the A–D option order while retaining stable internal answer IDs.
-The structured local content is bound at runtime only to:
+The first five stages contain one four-option MCQ each. Scoring is
+deterministic—five questions at 20 points each for a total of 100. Answer
+display order is randomized while stable internal answer IDs preserve
+correctness. Submissions lock immediately and show the selected answer, correct
+answer, rationale, and safety principle. The report summarizes results,
+strengths, and review topics; restart clears progress and reshuffles every
+stage.
 
-```text
-urn:li:dataset:(urn:li:dataPlatform:file,vascurounds.synthetic_cases.ali_marginally_threatened,DEV)
-```
-
-DataHub remains the source of the case metadata. Other Rutherford assets remain
-overview-only.
+DataHub remains the source of case metadata. A registry links the four exact
+synthetic DataHub URNs to repository-local JSON content. Mock mode exposes the
+same URNs for offline development and tests. Unknown URNs remain overview-only.
+All content is synthetic, educational, contains no real patient information,
+and is not direct clinical decision support.
 
 ## Requirements
 

@@ -4,8 +4,8 @@ import streamlit as st
 
 from vascurounds.conference.content import (
     ContentValidationError,
-    RUTHERFORD_IIA_DATAHUB_URN,
-    load_rutherford_iia_conference,
+    conference_available_for_urn,
+    load_conference,
 )
 from vascurounds.conference.engine import (
     advance_stage,
@@ -22,8 +22,6 @@ from vascurounds.conference.models import (
 )
 from vascurounds.models import (
     EDUCATIONAL_DISCLAIMER,
-    EDUCATIONAL_STATUS_LABEL,
-    SYNTHETIC_STATUS_LABEL,
     CaseAsset,
 )
 from vascurounds.providers.base import ProviderUnavailableError
@@ -41,9 +39,12 @@ st.set_page_config(
 
 
 def _render_safety_status(case: CaseAsset) -> None:
-    left, right = st.columns(2)
-    left.success(SYNTHETIC_STATUS_LABEL, icon="✅")
-    right.success(EDUCATIONAL_STATUS_LABEL, icon="✅")
+    labels = case.safety_labels
+    for start in range(0, len(labels), 2):
+        left, right = st.columns(2)
+        left.success(labels[start], icon="✅")
+        if start + 1 < len(labels):
+            right.success(labels[start + 1], icon="✅")
 
 
 def _select_case(case: CaseAsset) -> None:
@@ -103,7 +104,7 @@ def _render_case_overview(
     if definition is None:
         st.info(
             "This case remains overview-only. The staged conference is "
-            "available only for the linked Rutherford IIa DataHub asset."
+            "available only for registered synthetic DataHub assets."
         )
 
 
@@ -127,11 +128,15 @@ def _render_feedback(answer: AnswerRecord) -> None:
 
 
 def _render_performance_report(
+    case: CaseAsset,
     definition: ConferenceDefinition,
     attempt: AttemptState,
 ) -> None:
     st.caption("Stage 6 of 6")
     st.title("Performance report")
+    st.markdown(f"**Selected case:** {case.title}")
+    st.caption(case.rutherford_category)
+    st.caption(" · ".join(case.safety_labels))
     score_column, correct_column = st.columns(2)
     score_column.metric(
         "Total score",
@@ -199,6 +204,15 @@ def _render_performance_report(
         st.session_state.pop("conference_attempt", None)
         st.rerun()
 
+    if st.button(
+        "Choose Another Case",
+        use_container_width=True,
+        key=f"catalog-report-{attempt.attempt_id}",
+    ):
+        st.session_state.pop("conference_attempt", None)
+        st.session_state.pop("selected_case_urn", None)
+        st.rerun()
+
 
 def _render_case_conference(
     case: CaseAsset,
@@ -206,12 +220,20 @@ def _render_case_conference(
     attempt: AttemptState,
 ) -> None:
     if attempt.is_complete:
-        _render_performance_report(definition, attempt)
+        _render_performance_report(case, definition, attempt)
         return
 
-    top_left, top_right = st.columns([3, 1])
+    top_left, change_column, restart_column = st.columns([2, 1, 1])
     top_left.caption(case.title)
-    if top_right.button(
+    if change_column.button(
+        "Change Case",
+        use_container_width=True,
+        key=f"change-case-{attempt.attempt_id}",
+    ):
+        st.session_state.pop("conference_attempt", None)
+        st.session_state.pop("selected_case_urn", None)
+        st.rerun()
+    if restart_column.button(
         "Restart",
         use_container_width=True,
         key=f"restart-stage-{attempt.attempt_id}",
@@ -222,6 +244,7 @@ def _render_case_conference(
         )
         st.rerun()
 
+    st.caption(" · ".join(case.safety_labels))
     stage = current_stage(definition, attempt)
     assert stage is not None
     st.caption(f"Stage {stage.number} of 6 · {stage.points} points")
@@ -326,14 +349,21 @@ def main() -> None:
         _render_case_catalog(cases)
     else:
         definition = None
-        if selected_case.urn == RUTHERFORD_IIA_DATAHUB_URN:
+        if conference_available_for_urn(selected_case.urn):
             try:
-                definition = load_rutherford_iia_conference(selected_case)
+                definition = load_conference(selected_case)
             except ContentValidationError as exc:
                 st.error("The staged case content failed its safety validation.")
                 st.write(str(exc))
 
         attempt = st.session_state.get("conference_attempt")
+        if attempt is not None and (
+            definition is None
+            or attempt.datahub_urn != definition.datahub_urn
+            or attempt.case_id != definition.id
+        ):
+            st.session_state.pop("conference_attempt", None)
+            attempt = None
         if attempt is None or definition is None:
             _render_case_overview(selected_case, definition)
         else:

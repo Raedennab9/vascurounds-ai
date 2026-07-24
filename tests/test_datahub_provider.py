@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
+from vascurounds.case_urns import ACUTE_LIMB_ISCHEMIA_URNS
 from vascurounds.providers.datahub import DataHubCaseProvider
+from vascurounds.providers.mock import MockCaseProvider
 
 
 class StubResponse:
@@ -42,9 +44,11 @@ def _entity(
     *,
     synthetic: str = "true",
     educational: str = "true",
+    urn: str | None = None,
 ) -> dict[str, Any]:
     return {
-        "urn": f"urn:li:dataset:(urn:li:dataPlatform:vascurounds,{code},PROD)",
+        "urn": urn
+        or f"urn:li:dataset:(urn:li:dataPlatform:vascurounds,{code},PROD)",
         "type": "DATASET",
         "name": code,
         "properties": {
@@ -178,3 +182,43 @@ def test_accepts_exact_seed_metadata_and_rejects_missing_synthetic_evidence() ->
     assert cases[0].rutherford_category == "Rutherford IIb"
     assert cases[0].synthetic_data is True
     assert cases[0].educational_use is True
+
+
+def test_real_and_mock_providers_preserve_the_same_canonical_case_urns() -> None:
+    codes_and_titles = (
+        ("I", "Rutherford I — Viable"),
+        ("IIa", "Rutherford IIa — Marginally Threatened"),
+        ("IIb", "Rutherford IIb — Immediately Threatened"),
+        ("III", "Rutherford III — Irreversible"),
+    )
+    body = {
+        "data": {
+            "searchAcrossEntities": {
+                "searchResults": [
+                    {
+                        "entity": _entity(
+                            code,
+                            title,
+                            "Synthetic acute limb ischemia conference.",
+                            urn=urn,
+                        )
+                    }
+                    for (code, title), urn in zip(
+                        codes_and_titles,
+                        ACUTE_LIMB_ISCHEMIA_URNS,
+                        strict=True,
+                    )
+                ]
+            }
+        }
+    }
+    real_provider = DataHubCaseProvider(
+        "http://localhost:8080",
+        session=StubSession(body),  # type: ignore[arg-type]
+    )
+
+    real_urns = tuple(case.urn for case in real_provider.list_cases())
+    mock_urns = tuple(case.urn for case in MockCaseProvider().list_cases())
+
+    assert real_urns == ACUTE_LIMB_ISCHEMIA_URNS
+    assert mock_urns == ACUTE_LIMB_ISCHEMIA_URNS

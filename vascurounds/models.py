@@ -12,6 +12,8 @@ EDUCATIONAL_DISCLAIMER = (
 
 SYNTHETIC_STATUS_LABEL = "Synthetic data: Confirmed"
 EDUCATIONAL_STATUS_LABEL = "Educational use: Confirmed"
+NO_PATIENT_DATA_LABEL = "Real patient information: None"
+NO_DECISION_SUPPORT_LABEL = "Direct clinical decision support: Not provided"
 
 _CATEGORY_ORDER = {
     "I": 0,
@@ -44,6 +46,13 @@ class CaseAsset:
             labels.append(SYNTHETIC_STATUS_LABEL)
         if self.educational_use:
             labels.append(EDUCATIONAL_STATUS_LABEL)
+        if self.synthetic_data and self.educational_use:
+            labels.extend(
+                (
+                    NO_PATIENT_DATA_LABEL,
+                    NO_DECISION_SUPPORT_LABEL,
+                )
+            )
         return tuple(labels)
 
 

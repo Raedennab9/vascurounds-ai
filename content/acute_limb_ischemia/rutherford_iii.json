@@ -1,0 +1,200 @@
+{
+  "id": "ali-rutherford-iii-conference",
+  "title": "Rutherford III — Irreversible",
+  "rutherford_category": "Rutherford III",
+  "datahub_link": {
+    "urn": "urn:li:dataset:(urn:li:dataPlatform:file,vascurounds.synthetic_cases.ali_irreversible,DEV)",
+    "required_category": "Rutherford III"
+  },
+  "disclaimer": "For professional education and simulation only. Not for direct patient-care decision-making.",
+  "synthetic_findings": [
+    "Profound sensory loss or anesthesia",
+    "Profound paralysis with rigor",
+    "Absent arterial Doppler signal",
+    "Absent venous Doppler signal",
+    "Fixed mottling consistent with irreversible tissue injury",
+    "Limb not salvageable"
+  ],
+  "stages": [
+    {
+      "id": "focused_assessment",
+      "number": 1,
+      "title": "Stage 1: Initial recognition and focused assessment",
+      "narrative": "A synthetic patient has a profoundly numb, immobile lower limb with fixed mottling. Neither arterial nor venous Doppler signals are audible.",
+      "question": "What is the most important initial educational interpretation?",
+      "points": 20,
+      "rationale": "Profound anesthesia, paralysis or rigor, fixed mottling, and absent arterial and venous Doppler signals indicate irreversible tissue injury and a nonsalvageable limb.",
+      "safety_principle": "Recognizing irreversible ischemia prevents harmful attempts to reperfuse dead tissue and redirects attention to urgent senior and systemic assessment.",
+      "choices": [
+        {
+          "id": "recognize_irreversible_ischemia",
+          "text": "Recognize probable irreversible ischemia and obtain urgent senior vascular-surgery assessment",
+          "correct": true,
+          "feedback": "This identifies a nonsalvageable pattern and triggers urgent confirmation and systemic management."
+        },
+        {
+          "id": "classify_as_iib_for_revascularization",
+          "text": "Assume the limb is Rutherford IIb and proceed directly to limb-salvage reperfusion",
+          "correct": false,
+          "feedback": "Profound paralysis, anesthesia, fixed mottling, and absent venous flow exceed the findings of a salvageable IIb limb."
+        },
+        {
+          "id": "wait_for_sensation_to_return",
+          "text": "Observe for spontaneous return of sensation before requesting senior vascular assessment",
+          "correct": false,
+          "feedback": "Observation delays systemic and definitive management of a clinically irreversible presentation."
+        },
+        {
+          "id": "interpret_absent_signals_as_technical",
+          "text": "Treat both absent Doppler signals as a technical limitation and disregard the neurological examination",
+          "correct": false,
+          "feedback": "The neurological and skin findings independently support irreversible injury and cannot be dismissed as a Doppler artifact."
+        }
+      ]
+    },
+    {
+      "id": "rutherford_classification",
+      "number": 2,
+      "title": "Stage 2: Rutherford classification",
+      "narrative": "The synthetic limb has profound anesthesia, profound paralysis with rigor, fixed mottling, and absent arterial and venous Doppler signals.",
+      "question": "Which Rutherford category best matches these findings?",
+      "points": 20,
+      "rationale": "Profound sensory and motor loss with absent arterial and venous Doppler signals defines Rutherford III irreversible ischemia, in which major tissue loss or permanent nerve damage is inevitable.",
+      "safety_principle": "A clearly irreversible limb is not a candidate for limb-salvage revascularization.",
+      "choices": [
+        {
+          "id": "rutherford_i",
+          "text": "Rutherford I — Viable",
+          "correct": false,
+          "feedback": "A viable limb has no sensory or motor loss and retains audible arterial and venous Doppler signals."
+        },
+        {
+          "id": "rutherford_iia",
+          "text": "Rutherford IIa — Marginally threatened",
+          "correct": false,
+          "feedback": "Rutherford IIa has no motor weakness and at most toe-limited sensory loss."
+        },
+        {
+          "id": "rutherford_iib",
+          "text": "Rutherford IIb — Immediately threatened",
+          "correct": false,
+          "feedback": "Rutherford IIb remains salvageable and generally has mild-to-moderate weakness with preserved venous Doppler flow."
+        },
+        {
+          "id": "rutherford_iii",
+          "text": "Rutherford III — Irreversible",
+          "correct": true,
+          "feedback": "The profound neurological loss, fixed tissue findings, and absent arterial and venous signals support Rutherford III."
+        }
+      ]
+    },
+    {
+      "id": "immediate_management",
+      "number": 3,
+      "title": "Stage 3: Immediate management",
+      "narrative": "Senior review is being arranged for the synthetic nonsalvageable limb. The patient requires stabilization and assessment for systemic effects of ischemic tissue.",
+      "question": "Which immediate management focus is most appropriate?",
+      "points": 20,
+      "rationale": "Urgent senior vascular-surgery assessment should accompany analgesia, resuscitation, supportive care, and evaluation for hyperkalemia, acidosis, myoglobinuria, renal injury, hemodynamic deterioration, and systemic toxicity.",
+      "safety_principle": "The immediate priority is patient stabilization and systemic risk assessment, not an attempt to salvage a clinically nonviable limb.",
+      "choices": [
+        {
+          "id": "senior_review_and_systemic_support",
+          "text": "Obtain urgent senior vascular review, provide analgesia and resuscitation, and assess metabolic, renal, hemodynamic, and systemic consequences",
+          "correct": true,
+          "feedback": "This addresses the patient-level risks created by irreversible ischemic tissue while definitive management is planned."
+        },
+        {
+          "id": "heparin_then_revascularize",
+          "text": "Treat anticoagulation followed by immediate revascularization as the routine limb-salvage pathway",
+          "correct": false,
+          "feedback": "A clearly irreversible limb should not undergo attempted limb-salvage reperfusion."
+        },
+        {
+          "id": "analgesia_and_discharge",
+          "text": "Provide analgesia and arrange outpatient follow-up because the limb cannot be salvaged",
+          "correct": false,
+          "feedback": "Irreversible limb ischemia carries urgent systemic and definitive-management risks and is not an outpatient presentation."
+        },
+        {
+          "id": "focus_only_on_local_limb",
+          "text": "Limit assessment to the limb and defer metabolic, renal, and hemodynamic evaluation",
+          "correct": false,
+          "feedback": "Ischemic tissue can produce serious systemic consequences, so assessment cannot remain confined to the limb."
+        }
+      ]
+    },
+    {
+      "id": "imaging_and_planning",
+      "number": 4,
+      "title": "Stage 4: Diagnostic imaging and treatment planning",
+      "narrative": "The synthetic examination is clinically consistent with irreversible Rutherford III ischemia, without uncertainty about limb viability.",
+      "question": "What is the best imaging and planning principle?",
+      "points": 20,
+      "rationale": "When irreversibility is clinically established, anatomical imaging intended to plan limb-salvage revascularization offers no benefit and may delay definitive and systemic management.",
+      "safety_principle": "Do not allow unnecessary imaging to delay management of a clinically nonviable limb; limited investigation may be considered only if genuine diagnostic uncertainty would change the plan.",
+      "choices": [
+        {
+          "id": "avoid_salvage_imaging_delay",
+          "text": "Avoid imaging intended to plan limb-salvage reperfusion and proceed with definitive and systemic planning",
+          "correct": true,
+          "feedback": "This avoids delay and an inappropriate salvage pathway when irreversibility is clinically established."
+        },
+        {
+          "id": "cta_before_any_support",
+          "text": "Require computed tomographic angiography before analgesia, resuscitation, or senior discussion",
+          "correct": false,
+          "feedback": "Imaging must not displace immediate supportive care and senior assessment."
+        },
+        {
+          "id": "angiography_for_thrombolysis",
+          "text": "Perform angiography specifically to plan catheter-directed thrombolysis of the nonviable limb",
+          "correct": false,
+          "feedback": "Thrombolytic limb salvage is inappropriate for clinically irreversible tissue."
+        },
+        {
+          "id": "serial_elective_imaging",
+          "text": "Use serial elective imaging to observe whether fixed mottling and paralysis improve",
+          "correct": false,
+          "feedback": "Observation and serial imaging delay definitive management and do not reverse established tissue death."
+        }
+      ]
+    },
+    {
+      "id": "definitive_management",
+      "number": 5,
+      "title": "Stage 5: Definitive management and escalation",
+      "narrative": "Urgent senior assessment confirms that the synthetic limb is nonsalvageable and that attempted reperfusion would expose the patient to systemic risk.",
+      "question": "Which definitive-management direction is most appropriate?",
+      "points": 20,
+      "rationale": "Primary amputation or appropriate palliation should be considered according to physiological condition, operative suitability, prognosis, and goals of care; a specific amputation level requires individualized assessment.",
+      "safety_principle": "Reperfusing a nonviable limb can release potassium, acid, myoglobin, and other ischemic metabolites, causing renal injury, hemodynamic collapse, and systemic toxicity.",
+      "choices": [
+        {
+          "id": "amputation_or_palliation",
+          "text": "Plan primary amputation or appropriate palliation according to physiology, operative suitability, prognosis, and goals of care",
+          "correct": true,
+          "feedback": "This recognizes the nonsalvageable limb while individualizing the definitive direction without prescribing an amputation level."
+        },
+        {
+          "id": "attempt_revascularization_first",
+          "text": "Attempt surgical or endovascular revascularization before considering amputation in every case",
+          "correct": false,
+          "feedback": "Routine reperfusion of a clearly irreversible limb offers no salvage benefit and may cause severe systemic harm."
+        },
+        {
+          "id": "fixed_amputation_level",
+          "text": "Specify the same exact amputation level for every Rutherford III presentation",
+          "correct": false,
+          "feedback": "Amputation level depends on individualized tissue, anatomical, physiological, and rehabilitation assessment."
+        },
+        {
+          "id": "supportive_care_without_plan",
+          "text": "Continue supportive care indefinitely without discussing amputation, palliation, prognosis, or goals of care",
+          "correct": false,
+          "feedback": "Supportive care must be paired with a timely definitive plan and appropriate goals-of-care discussion."
+        }
+      ]
+    }
+  ]
+}

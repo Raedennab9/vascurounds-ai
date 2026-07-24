@@ -1,5 +1,11 @@
 from __future__ import annotations
 
+from vascurounds.case_urns import (
+    RUTHERFORD_I_DATAHUB_URN,
+    RUTHERFORD_IIA_DATAHUB_URN,
+    RUTHERFORD_IIB_DATAHUB_URN,
+    RUTHERFORD_III_DATAHUB_URN,
+)
 from vascurounds.models import CaseAsset, sort_cases_clinically
 
 
@@ -11,7 +17,7 @@ class MockCaseProvider:
     def list_cases(self) -> list[CaseAsset]:
         cases = [
             CaseAsset(
-                urn="urn:li:dataset:(urn:li:dataPlatform:vascurounds,ali-iii,DEV)",
+                urn=RUTHERFORD_III_DATAHUB_URN,
                 title="Rutherford III — Irreversible",
                 rutherford_category="Rutherford III",
                 description=(
@@ -22,7 +28,7 @@ class MockCaseProvider:
                 educational_use=True,
             ),
             CaseAsset(
-                urn="urn:li:dataset:(urn:li:dataPlatform:vascurounds,ali-i,DEV)",
+                urn=RUTHERFORD_I_DATAHUB_URN,
                 title="Rutherford I — Viable",
                 rutherford_category="Rutherford I",
                 description=(
@@ -33,7 +39,7 @@ class MockCaseProvider:
                 educational_use=True,
             ),
             CaseAsset(
-                urn="urn:li:dataset:(urn:li:dataPlatform:vascurounds,ali-iib,DEV)",
+                urn=RUTHERFORD_IIB_DATAHUB_URN,
                 title="Rutherford IIb — Immediately Threatened",
                 rutherford_category="Rutherford IIb",
                 description=(
@@ -44,10 +50,7 @@ class MockCaseProvider:
                 educational_use=True,
             ),
             CaseAsset(
-                urn=(
-                    "urn:li:dataset:(urn:li:dataPlatform:file,"
-                    "vascurounds.synthetic_cases.ali_marginally_threatened,DEV)"
-                ),
+                urn=RUTHERFORD_IIA_DATAHUB_URN,
                 title="Rutherford IIa — Marginally Threatened",
                 rutherford_category="Rutherford IIa",
                 description=(

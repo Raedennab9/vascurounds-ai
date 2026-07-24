@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import pytest
 
+from vascurounds.conference.content import (
+    conference_available_for_urn,
+    load_conference,
+)
 from vascurounds.models import CaseAsset
 from vascurounds.providers.base import ProviderUnavailableError
 from vascurounds.providers.datahub import DataHubCaseProvider
@@ -70,3 +74,5 @@ def test_fallback_provider_uses_safe_mock_cases_when_primary_is_unavailable() ->
     assert provider.fallback_active is True
     assert len(cases) == 4
     assert all(case.synthetic_data and case.educational_use for case in cases)
+    assert all(conference_available_for_urn(case.urn) for case in cases)
+    assert [load_conference(case).total_points for case in cases] == [100] * 4
