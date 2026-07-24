@@ -9,7 +9,10 @@ from vascurounds.models import (
     CaseAsset,
 )
 from vascurounds.providers.base import ProviderUnavailableError
-from vascurounds.providers.factory import create_provider
+from vascurounds.providers.factory import (
+    InvalidDataHubConfigurationError,
+    create_provider,
+)
 
 
 st.set_page_config(
@@ -78,7 +81,13 @@ def main() -> None:
     st.title("VascuRounds AI")
     st.info(EDUCATIONAL_DISCLAIMER, icon="ℹ️")
 
-    provider = create_provider()
+    try:
+        provider = create_provider()
+    except InvalidDataHubConfigurationError as exc:
+        st.error("Invalid DataHub configuration.")
+        st.write(str(exc))
+        return
+
     try:
         cases = provider.list_cases()
     except ProviderUnavailableError as exc:
