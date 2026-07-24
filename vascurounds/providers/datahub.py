@@ -56,6 +56,7 @@ _SYNTHETIC_KEYS = {
     "synthetic",
     "syntheticdata",
     "syntheticdatastatus",
+    "datatype",
     "issynthetic",
     "datasource",
     "datastatus",

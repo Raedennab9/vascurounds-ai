@@ -60,6 +60,40 @@ def _entity(
     }
 
 
+def _seeded_entity(
+    code: str,
+    title: str,
+    *,
+    include_data_type: bool = True,
+) -> dict[str, Any]:
+    custom_properties = [
+        {"key": "rutherford_class", "value": code},
+        {
+            "key": "intended_use",
+            "value": "Professional education and simulation",
+        },
+        {"key": "contains_patient_data", "value": "No"},
+        {"key": "decision_support", "value": "No"},
+    ]
+    if include_data_type:
+        custom_properties.insert(
+            1,
+            {"key": "data_type", "value": "Synthetic educational case"},
+        )
+
+    return {
+        "urn": f"urn:li:dataset:(urn:li:dataPlatform:vascurounds,{code},PROD)",
+        "type": "DATASET",
+        "name": code,
+        "properties": {
+            "name": title,
+            "description": f"Synthetic acute limb ischemia case: {title}.",
+            "customProperties": custom_properties,
+        },
+        "tags": {"tags": []},
+    }
+
+
 def test_retrieves_and_sorts_eligible_datahub_cases() -> None:
     body = {
         "data": {
@@ -108,3 +142,39 @@ def test_retrieves_and_sorts_eligible_datahub_cases() -> None:
     ]
     assert all(case.synthetic_data and case.educational_use for case in cases)
     assert all(case.description for case in cases)
+
+
+def test_accepts_exact_seed_metadata_and_rejects_missing_synthetic_evidence() -> None:
+    body = {
+        "data": {
+            "searchAcrossEntities": {
+                "searchResults": [
+                    {
+                        "entity": _seeded_entity(
+                            "IIb",
+                            "Rutherford IIb — Immediately Threatened",
+                        )
+                    },
+                    {
+                        "entity": _seeded_entity(
+                            "I",
+                            "Rutherford I — Missing Synthetic Evidence",
+                            include_data_type=False,
+                        )
+                    },
+                ]
+            }
+        }
+    }
+    provider = DataHubCaseProvider(
+        "http://localhost:8080",
+        session=StubSession(body),  # type: ignore[arg-type]
+    )
+
+    cases = provider.list_cases()
+
+    assert len(cases) == 1
+    assert cases[0].title == "Rutherford IIb — Immediately Threatened"
+    assert cases[0].rutherford_category == "Rutherford IIb"
+    assert cases[0].synthetic_data is True
+    assert cases[0].educational_use is True
